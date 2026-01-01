@@ -1,0 +1,37 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and customize
+
+aws_region = "us-east-1"
+project_name = "s3-scanner"
+environment = "prod"
+
+# VPC Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# Database Configuration
+db_name = "scanner"
+db_username = "scanneradmin"
+db_instance_class = "db.t3.micro"
+
+# Bastion Configuration
+# Create an EC2 key pair in AWS Console first, then set the name here
+bastion_key_name = "my-key-pair"
+allowed_ssh_cidr = "0.0.0.0/0" # Restrict this to your IP for security
+
+# ECS Configuration
+ecs_task_cpu = "512"
+ecs_task_memory = "1024"
+ecs_min_capacity = 1
+ecs_max_capacity = 5
+
+# SQS Configuration
+sqs_visibility_timeout = 300
+sqs_max_receive_count = 3
+
+# Tags
+tags = {
+  Project   = "S3-Scanner"
+  ManagedBy = "Terraform"
+  Environment = "production"
+}
+

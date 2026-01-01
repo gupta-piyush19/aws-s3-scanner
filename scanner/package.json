@@ -1,0 +1,27 @@
+{
+  "name": "s3-scanner-worker",
+  "version": "1.0.0",
+  "description": "ECS Fargate worker for scanning S3 files for sensitive data",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": ["aws", "s3", "scanner", "sensitive-data"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.470.0",
+    "@aws-sdk/client-sqs": "^3.470.0",
+    "@aws-sdk/client-secrets-manager": "^3.470.0",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+
