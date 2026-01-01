@@ -1,6 +1,3 @@
-# ECS Fargate Configuration
-
-# ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "${local.name_prefix}-cluster"
   
@@ -24,7 +21,6 @@ resource "aws_cloudwatch_log_group" "scanner" {
   }
 }
 
-# ECS Task Definition
 resource "aws_ecs_task_definition" "scanner" {
   family                   = "${local.name_prefix}-scanner"
   network_mode             = "awsvpc"
@@ -77,7 +73,6 @@ resource "aws_ecs_task_definition" "scanner" {
   }
 }
 
-# ECS Service
 resource "aws_ecs_service" "scanner" {
   name            = "${local.name_prefix}-scanner-service"
   cluster         = aws_ecs_cluster.main.id
@@ -91,7 +86,6 @@ resource "aws_ecs_service" "scanner" {
     assign_public_ip = false
   }
   
-  # Enable deployment circuit breaker
   deployment_circuit_breaker {
     enable   = true
     rollback = true
@@ -109,11 +103,6 @@ resource "aws_ecs_service" "scanner" {
   }
 }
 
-# ========================================
-# Auto Scaling Configuration
-# ========================================
-
-# Auto Scaling Target
 resource "aws_appautoscaling_target" "ecs" {
   max_capacity       = var.ecs_max_capacity
   min_capacity       = var.ecs_min_capacity
@@ -122,7 +111,6 @@ resource "aws_appautoscaling_target" "ecs" {
   service_namespace  = "ecs"
 }
 
-# Auto Scaling Policy - Target Tracking based on SQS Queue Depth
 resource "aws_appautoscaling_policy" "ecs_queue_depth" {
   name               = "${local.name_prefix}-scanner-queue-depth-scaling"
   policy_type        = "TargetTrackingScaling"
@@ -131,9 +119,9 @@ resource "aws_appautoscaling_policy" "ecs_queue_depth" {
   service_namespace  = aws_appautoscaling_target.ecs.service_namespace
   
   target_tracking_scaling_policy_configuration {
-    target_value       = 10.0 # Target 10 messages per task
-    scale_in_cooldown  = 300  # 5 minutes
-    scale_out_cooldown = 60   # 1 minute
+    target_value       = 10.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 60
     
     customized_metric_specification {
       metrics {
@@ -193,7 +181,6 @@ resource "aws_appautoscaling_policy" "ecs_queue_depth" {
   }
 }
 
-# Additional CPU-based scaling policy (backup)
 resource "aws_appautoscaling_policy" "ecs_cpu" {
   name               = "${local.name_prefix}-scanner-cpu-scaling"
   policy_type        = "TargetTrackingScaling"

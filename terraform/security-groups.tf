@@ -1,6 +1,3 @@
-# Security Groups
-
-# RDS Security Group
 resource "aws_security_group" "rds" {
   name = "${local.name_prefix}-rds-sg"
   description      = "Security group for RDS database"
@@ -43,7 +40,6 @@ resource "aws_security_group" "rds" {
   }
 }
 
-# ECS Tasks Security Group
 resource "aws_security_group" "ecs_tasks" {
   name_prefix = "${local.name_prefix}-ecs-tasks-"
   description = "Security group for ECS tasks"
@@ -66,7 +62,6 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-# Lambda Security Group
 resource "aws_security_group" "lambda" {
   name_prefix = "${local.name_prefix}-lambda-"
   description = "Security group for Lambda functions"
@@ -89,7 +84,6 @@ resource "aws_security_group" "lambda" {
   }
 }
 
-# Bastion Security Group
 resource "aws_security_group" "bastion" {
   name_prefix = "${local.name_prefix}-bastion-"
   description = "Security group for bastion host"

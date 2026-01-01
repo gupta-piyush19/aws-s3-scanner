@@ -1,14 +1,5 @@
-#!/usr/bin/env node
-
-/**
- * Script to generate and upload 500+ test files to S3
- * Files will contain various types of sensitive data for testing
- */
-
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const { randomBytes } = require("crypto");
 
-// Configuration
 const BUCKET_NAME = process.env.S3_BUCKET_NAME;
 const PREFIX = "test-data/";
 const FILE_COUNT = 550;
@@ -16,7 +7,6 @@ const REGION = process.env.AWS_REGION || "us-east-1";
 
 const s3Client = new S3Client({ region: REGION });
 
-// Sample sensitive data patterns
 const SAMPLE_SSNS = [
   "123-45-6789",
   "987-65-4321",
@@ -26,11 +16,11 @@ const SAMPLE_SSNS = [
 ];
 
 const SAMPLE_CREDIT_CARDS = [
-  "4532015112830366", // Visa
-  "5425233430109903", // Mastercard
-  "374245455400126", // Amex
-  "6011111111111117", // Discover
-  "4916338506082832", // Visa
+  "4532015112830366",
+  "5425233430109903",
+  "374245455400126",
+  "6011111111111117",
+  "4916338506082832",
 ];
 
 const SAMPLE_AWS_KEYS = [
@@ -59,9 +49,6 @@ const SAMPLE_PHONES = [
 
 const FILE_EXTENSIONS = [".txt", ".csv", ".json", ".log"];
 
-/**
- * Generate random text content
- */
 function generateRandomText(size) {
   const words = [
     "Lorem",
@@ -100,9 +87,6 @@ function generateRandomText(size) {
   return sentences.join(" ");
 }
 
-/**
- * Generate file content with or without sensitive data
- */
 function generateFileContent(includeSensitive, extension, size) {
   let content = "";
 
@@ -173,7 +157,6 @@ function generateFileContent(includeSensitive, extension, size) {
       content += `${timestamp} [${level}] ${message}\n`;
     }
   } else {
-    // .txt file
     content = generateRandomText(size / 2);
 
     if (includeSensitive) {
@@ -223,9 +206,6 @@ function generateFileContent(includeSensitive, extension, size) {
   return content;
 }
 
-/**
- * Upload a file to S3
- */
 async function uploadFile(key, content) {
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
@@ -237,9 +217,6 @@ async function uploadFile(key, content) {
   await s3Client.send(command);
 }
 
-/**
- * Main function
- */
 async function main() {
   if (!BUCKET_NAME) {
     console.error("Error: S3_BUCKET_NAME environment variable is required");
@@ -259,14 +236,11 @@ async function main() {
   let withSensitiveData = 0;
 
   for (let i = 0; i < FILE_COUNT; i++) {
-    // 30% chance of having sensitive data
     const includeSensitive = Math.random() < 0.3;
     if (includeSensitive) withSensitiveData++;
 
-    // Random file size between 1KB and 500KB
     const size = Math.floor(Math.random() * 499000) + 1000;
 
-    // Random file extension
     const extension =
       FILE_EXTENSIONS[Math.floor(Math.random() * FILE_EXTENSIONS.length)];
 
@@ -301,7 +275,6 @@ async function main() {
   );
 }
 
-// Run the script
 main().catch((error) => {
   console.error("Fatal error:", error);
   process.exit(1);

@@ -1,4 +1,3 @@
-# Terraform Outputs
 
 output "vpc_id" {
   description = "VPC ID"
@@ -74,8 +73,7 @@ output "bastion_instance_id" {
   description = "Bastion instance ID"
   value       = aws_instance.bastion.id
 }
-
-# Summary output for easy reference
+    
 output "deployment_summary" {
   description = "Deployment summary"
   value = {

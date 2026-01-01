@@ -1,6 +1,3 @@
--- AWS S3 Scanner Database Schema
--- Creates tables for jobs, job objects, and findings
-
 -- Jobs table: tracks scan jobs
 CREATE TABLE IF NOT EXISTS jobs (
     job_id UUID PRIMARY KEY,

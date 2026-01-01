@@ -1,6 +1,3 @@
-# Lambda Functions Configuration
-
-# CloudWatch Log Groups for Lambda functions
 resource "aws_cloudwatch_log_group" "lambda_scan" {
   name              = "/aws/lambda/${local.name_prefix}-scan"
   retention_in_days = 7
@@ -27,19 +24,8 @@ resource "aws_cloudwatch_log_group" "lambda_jobs" {
     Name = "${local.name_prefix}-jobs-logs"
   }
 }
-
-# Lambda Layer for shared dependencies (pg, aws-sdk, uuid)
-# Note: In production, you'd build and upload this separately
-# For now, we'll include dependencies in each Lambda deployment package
-
-# ========================================
-# Lambda Function: POST /scan
-# ========================================
-
-# Create deployment package with shared dependencies
 resource "null_resource" "lambda_scan_package" {
   triggers = {
-    # Rebuild when source files change
     scan_code   = filemd5("${path.module}/../api/scan/index.js")
     shared_code = filemd5("${path.module}/../api/shared/db.js")
   }
@@ -97,14 +83,8 @@ resource "aws_lambda_function" "scan" {
   }
 }
 
-# ========================================
-# Lambda Function: GET /results
-# ========================================
-
-# Create deployment package with shared dependencies
 resource "null_resource" "lambda_results_package" {
   triggers = {
-    # Rebuild when source files change
     results_code = filemd5("${path.module}/../api/results/index.js")
     shared_code  = filemd5("${path.module}/../api/shared/db.js")
   }
@@ -161,14 +141,8 @@ resource "aws_lambda_function" "results" {
   }
 }
 
-# ========================================
-# Lambda Function: GET /jobs/{job_id}
-# ========================================
-
-# Create deployment package with shared dependencies
 resource "null_resource" "lambda_jobs_package" {
   triggers = {
-    # Rebuild when source files change
     jobs_code   = filemd5("${path.module}/../api/jobs/index.js")
     shared_code = filemd5("${path.module}/../api/shared/db.js")
   }

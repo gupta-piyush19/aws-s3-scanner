@@ -1,5 +1,3 @@
-# ECR Repository for Scanner Worker
-
 resource "aws_ecr_repository" "scanner" {
   name                 = "${local.name_prefix}-scanner"
   image_tag_mutability = "MUTABLE"
@@ -17,7 +15,6 @@ resource "aws_ecr_repository" "scanner" {
   }
 }
 
-# Lifecycle policy to keep only recent images
 resource "aws_ecr_lifecycle_policy" "scanner" {
   repository = aws_ecr_repository.scanner.name
   

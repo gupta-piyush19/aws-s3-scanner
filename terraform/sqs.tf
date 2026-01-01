@@ -1,6 +1,4 @@
-# SQS Queues Configuration
 
-# Dead Letter Queue
 resource "aws_sqs_queue" "dlq" {
   name = "${local.name_prefix}-scan-jobs-dlq"
   
@@ -19,14 +17,12 @@ resource "aws_sqs_queue" "dlq" {
 resource "aws_sqs_queue" "scan_jobs" {
   name = "${local.name_prefix}-scan-jobs"
   
-  message_retention_seconds  = 1209600 # 14 days
+  message_retention_seconds  = 1209600
   visibility_timeout_seconds = var.sqs_visibility_timeout
-  receive_wait_time_seconds  = 20 # Enable long polling
+  receive_wait_time_seconds  = 20
   
-  # Enable encryption at rest
   sqs_managed_sse_enabled = true
-  
-  # Redrive policy to send failed messages to DLQ
+
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq.arn
     maxReceiveCount     = var.sqs_max_receive_count
@@ -37,7 +33,6 @@ resource "aws_sqs_queue" "scan_jobs" {
   }
 }
 
-# CloudWatch Alarms for Queue Depth
 resource "aws_cloudwatch_metric_alarm" "queue_depth" {
   alarm_name          = "${local.name_prefix}-high-queue-depth"
   comparison_operator = "GreaterThanThreshold"

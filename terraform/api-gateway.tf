@@ -1,6 +1,3 @@
-# API Gateway HTTP API Configuration
-
-# API Gateway
 resource "aws_apigatewayv2_api" "main" {
   name          = "${local.name_prefix}-api"
   protocol_type = "HTTP"

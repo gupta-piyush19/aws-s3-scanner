@@ -1,9 +1,3 @@
-/**
- * Sensitive Data Detectors
- * Implements regex-based detection for various types of sensitive data
- */
-
-// Detector patterns
 const DETECTORS = {
   SSN: {
     name: "SSN",
@@ -80,16 +74,9 @@ const DETECTORS = {
   },
 };
 
-/**
- * Luhn algorithm for credit card validation
- * @param {string} cardNumber - Card number string (may contain spaces/dashes)
- * @returns {boolean} - True if valid card number
- */
 function luhnCheck(cardNumber) {
-  // Remove all non-digit characters
   const digits = cardNumber.replace(/\D/g, "");
 
-  // Must be 13-19 digits
   if (digits.length < 13 || digits.length > 19) {
     return false;
   }
@@ -97,7 +84,6 @@ function luhnCheck(cardNumber) {
   let sum = 0;
   let isEven = false;
 
-  // Loop through values starting from the rightmost digit
   for (let i = digits.length - 1; i >= 0; i--) {
     let digit = parseInt(digits[i]);
 
@@ -115,28 +101,15 @@ function luhnCheck(cardNumber) {
   return sum % 10 === 0;
 }
 
-/**
- * Get context around a match (surrounding text)
- * @param {string} content - Full content
- * @param {number} matchIndex - Index of the match
- * @param {number} contextSize - Characters before and after (default: 50)
- * @returns {string} - Context string
- */
 function getContext(content, matchIndex, contextSize = 50) {
   const start = Math.max(0, matchIndex - contextSize);
   const end = Math.min(content.length, matchIndex + contextSize);
   return content.slice(start, end).replace(/\n/g, " ").trim();
 }
 
-/**
- * Check if context contains relevant keywords
- * @param {string} context - Context string
- * @param {Array<string>} keywords - Keywords to search for
- * @returns {boolean} - True if any keyword found
- */
 function hasContextKeywords(context, keywords) {
   if (!keywords || keywords.length === 0) {
-    return true; // No keywords required
+    return true;
   }
 
   const lowerContext = context.toLowerCase();
@@ -145,19 +118,9 @@ function hasContextKeywords(context, keywords) {
   );
 }
 
-/**
- * Scan content for sensitive data
- * @param {string} content - File content to scan
- * @param {string} bucket - S3 bucket name
- * @param {string} key - S3 object key
- * @param {string} etag - S3 object ETag
- * @param {string} jobId - Job ID
- * @returns {Array} - Array of findings
- */
 function scanContent(content, bucket, key, etag, jobId) {
   const findings = [];
 
-  // SSN Detection
   let matches = content.matchAll(DETECTORS.SSN.pattern);
   for (const match of matches) {
     const context = getContext(content, match.index, 100);
@@ -175,7 +138,6 @@ function scanContent(content, bucket, key, etag, jobId) {
     }
   }
 
-  // Credit Card Detection
   matches = content.matchAll(DETECTORS.CREDIT_CARD.pattern);
   for (const match of matches) {
     if (
@@ -198,7 +160,6 @@ function scanContent(content, bucket, key, etag, jobId) {
     }
   }
 
-  // AWS Access Key Detection
   matches = content.matchAll(DETECTORS.AWS_ACCESS_KEY.pattern);
   for (const match of matches) {
     findings.push({
@@ -213,7 +174,6 @@ function scanContent(content, bucket, key, etag, jobId) {
     });
   }
 
-  // AWS Secret Key Detection (with context)
   matches = content.matchAll(DETECTORS.AWS_SECRET_KEY.pattern);
   for (const match of matches) {
     const context = getContext(content, match.index, 100);
@@ -231,7 +191,6 @@ function scanContent(content, bucket, key, etag, jobId) {
     }
   }
 
-  // Email Detection
   matches = content.matchAll(DETECTORS.EMAIL.pattern);
   for (const match of matches) {
     findings.push({
@@ -246,7 +205,6 @@ function scanContent(content, bucket, key, etag, jobId) {
     });
   }
 
-  // US Phone Detection
   for (const pattern of DETECTORS.US_PHONE.patterns) {
     matches = content.matchAll(pattern);
     for (const match of matches) {

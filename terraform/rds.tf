@@ -1,6 +1,3 @@
-# RDS PostgreSQL Configuration
-
-# DB Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "${local.name_prefix}-db-subnet-group"
   subnet_ids = aws_subnet.private[*].id
@@ -10,7 +7,6 @@ resource "aws_db_subnet_group" "main" {
   }
 }
 
-# RDS Instance
 resource "aws_db_instance" "postgres" {
   identifier = "${local.name_prefix}-db"
   
@@ -32,28 +28,24 @@ resource "aws_db_instance" "postgres" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   publicly_accessible    = false
   
-  backup_retention_period = 1  # Free tier supports 0-1 days
+  backup_retention_period = 1
   backup_window          = "03:00-04:00"
   maintenance_window     = "mon:04:00-mon:05:00"
   
   skip_final_snapshot       = true
   final_snapshot_identifier = null
   
-  # Enable enhanced monitoring
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
   
-  # Enable automated minor version upgrades
   auto_minor_version_upgrade = true
   
-  # Multi-AZ for production
-  multi_az = false # Set to true for production
+  multi_az = false
   
   tags = {
     Name = "${local.name_prefix}-postgres-db"
   }
 }
 
-# Secrets Manager Secret for DB Credentials
 resource "aws_secretsmanager_secret" "db_credentials" {
   name                    = "${local.name_prefix}-db-credentials"
   description             = "Database credentials for S3 Scanner"

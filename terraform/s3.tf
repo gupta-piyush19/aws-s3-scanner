@@ -1,6 +1,4 @@
-# S3 Bucket Configuration
 
-# S3 Bucket for test files
 resource "aws_s3_bucket" "scanner_files" {
   bucket = "${local.name_prefix}-files-${local.account_id}"
   
@@ -8,8 +6,7 @@ resource "aws_s3_bucket" "scanner_files" {
     Name = "${local.name_prefix}-files"
   }
 }
-
-# Enable versioning
+  
 resource "aws_s3_bucket_versioning" "scanner_files" {
   bucket = aws_s3_bucket.scanner_files.id
   
@@ -18,7 +15,6 @@ resource "aws_s3_bucket_versioning" "scanner_files" {
   }
 }
 
-# Block public access
 resource "aws_s3_bucket_public_access_block" "scanner_files" {
   bucket = aws_s3_bucket.scanner_files.id
   
@@ -28,7 +24,6 @@ resource "aws_s3_bucket_public_access_block" "scanner_files" {
   restrict_public_buckets = true
 }
 
-# Enable encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "scanner_files" {
   bucket = aws_s3_bucket.scanner_files.id
   
@@ -39,7 +34,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "scanner_files" {
   }
 }
 
-# Lifecycle rules
 resource "aws_s3_bucket_lifecycle_configuration" "scanner_files" {
   bucket = aws_s3_bucket.scanner_files.id
   
@@ -55,7 +49,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "scanner_files" {
   }
 }
 
-# Bucket policy (will be updated with IAM roles later)
 resource "aws_s3_bucket_policy" "scanner_files" {
   bucket = aws_s3_bucket.scanner_files.id
   

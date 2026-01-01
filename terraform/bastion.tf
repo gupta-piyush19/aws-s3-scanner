@@ -1,6 +1,3 @@
-# Bastion Host Configuration
-
-# Get latest Amazon Linux 2023 AMI
 data "aws_ami" "amazon_linux_2023" {
   most_recent = true
   owners      = ["amazon"]
@@ -111,7 +108,6 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# Elastic IP for Bastion (optional, for consistent IP)
 resource "aws_eip" "bastion" {
   domain   = "vpc"
   instance = aws_instance.bastion.id

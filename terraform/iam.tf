@@ -1,8 +1,3 @@
-# IAM Roles and Policies
-
-# ========================================
-# ECS Task Execution Role
-# ========================================
 resource "aws_iam_role" "ecs_task_execution" {
   name = "${local.name_prefix}-ecs-task-execution-role"
   
@@ -27,7 +22,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# Allow ECS to pull images and write logs
 resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
   name = "${local.name_prefix}-ecs-task-execution-secrets"
   role = aws_iam_role.ecs_task_execution.id
@@ -48,9 +42,6 @@ resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
   })
 }
 
-# ========================================
-# ECS Task Role (for application code)
-# ========================================
 resource "aws_iam_role" "ecs_task" {
   name = "${local.name_prefix}-ecs-task-role"
   
@@ -109,9 +100,6 @@ resource "aws_iam_role_policy" "ecs_task_policy" {
   })
 }
 
-# ========================================
-# Lambda Execution Role for Scan API
-# ========================================
 resource "aws_iam_role" "lambda_scan" {
   name = "${local.name_prefix}-lambda-scan-role"
   
@@ -173,9 +161,6 @@ resource "aws_iam_role_policy" "lambda_scan_policy" {
   })
 }
 
-# ========================================
-# Lambda Execution Role for Results/Jobs APIs
-# ========================================
 resource "aws_iam_role" "lambda_query" {
   name = "${local.name_prefix}-lambda-query-role"
   
